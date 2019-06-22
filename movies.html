@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts.min.js"></script>
+    <script src="data.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        html,body{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .container{
+            width: 100%;
+            height:100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+    </style>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+
+<div class="container"></div>
+
+<script>
+    let container = document.getElementsByClassName('container');
+    let pie = echarts.init(container[[0]]);
+    let selected = {};
+    let series = [];
+    categories.forEach(category=>{
+       let movies = data.filter(ele=>ele[4].includes(category));
+       if (category == '全部'){
+           selected[category] = true;
+       }else {
+           selected[category] = false;
+       }
+       let obj = {
+           name: category,
+           data: category=='全部' ? data : movies,
+           type: 'scatter',
+           symbolSize: function (data) {
+               return Math.ceil(data[2] / 10)
+           },
+           label: {
+               emphasis: {
+                   show: true,
+                   formatter: function (param) {
+                       return param.data[3];
+                   },
+                   position: 'top'
+               }
+           },
+       };
+       series.push(obj);
+    });
+    let pieOption = {
+        backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
+            offset: 0,
+            color: '#f7f8fa'
+        }, {
+            offset: 1,
+            color: '#cdd0d5'
+        }]),
+        title: {
+            text: '豆瓣电影 top250',
+            top:50,
+            right:0
+        },
+        xAxis: {
+            name: '评论次数',
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            }
+        },
+        yAxis: {
+            name: '评分',
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+            scale: true
+        },
+        legend: {
+            data: data.legendData,
+            selectedMode: 'single'
+        },
+
+        series
+    };
+    pie.setOption(pieOption);
+</script>
+</body>
+</html>
